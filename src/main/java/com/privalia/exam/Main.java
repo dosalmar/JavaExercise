@@ -1,46 +1,141 @@
 package com.privalia.exam;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+	
+		//--------- TODO parametros!!!!
+		String path = "./stocks-ITX.csv";
+		BigDecimal inversionMensual = new BigDecimal(50);
+		BigDecimal comision = new BigDecimal(2);
+		//if empty file, return error
+		BigDecimal totalStockQuantity = new BigDecimal(0);
 		
+		List<ItxStockRow> inputDataFromCsv = new ArrayList<ItxStockRow>();
 
-		
-		Calendar from = new GregorianCalendar(2017, 0, 0);
-		Calendar to = new GregorianCalendar(2017, 11, 0);
+		try{
+			File inputF = new File(path);
+			InputStream inputFS = new FileInputStream(inputF);
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputFS));
 
-		
+			//br.lines().forEach(line -> System.out.println(line));
+			//Class<?> transformFunctions = ItxStockRow.class;
+			
+			inputDataFromCsv = br.lines().skip(1).map(mapStringToitxStockRow)
+					.sorted((final ItxStockRow r1, final ItxStockRow r2) -> r1.getDate().compareTo(r2.getDate()))
+					.collect(Collectors.toList());	
+			
+			//TODO ordenar las fechas por orden!!!
+			
+			
+			//TODO ----------------------------------- Intento de lambda!!!!!!
+			/*inputDataFromCsv.forEach(day -> {
+				if(day.isLastThursdayOfMonth()){
+					System.out.println("------- Es el ultimo jueves");
+					System.out.println(day);
+				}
+			});*/
+			
+			
+			//Old way
+			Iterator<ItxStockRow> i = inputDataFromCsv.iterator();
+			
+			BigDecimal invesmentWOcomision = substractBrokerComision(inversionMensual, comision);
+
+			while(i.hasNext()) {
+				ItxStockRow tmp = i.next();
+
+				if(tmp.isLastThursdayOfMonth() ) {
+					//Buscar dia de compra
+					if(i.hasNext()) {
+						ItxStockRow nextOpenDay = i.next();
+						BigDecimal price = nextOpenDay.getApertura();
+						System.out.println("Dia de compra:\n" + nextOpenDay);
+
+						//Calc numero de acciones
+						BigDecimal monthStockQuantity = getStockQuantityToBuy(invesmentWOcomision, price);
+						System.out.println("Cantidad comprada:" + monthStockQuantity.toString());
+						totalStockQuantity = totalStockQuantity.add(monthStockQuantity);
+						System.out.println("Cantidad acumulada" + totalStockQuantity.toString());
+					}else {
+						System.out.println("Last row.");
+						BigDecimal lastPrice = tmp.getCierre();
+								
+						System.out.println("Calculo de ganancias: " + totalStockQuantity.multiply(lastPrice));
+								
+					}
+				}
+
+			}			
+			br.close();
+
+		}catch(IOException e) {
+			throw e;
+		}
+
 	}
 
-	
-	//Coger BigDecimals para no tener problema de float!!!
-	
-	
-	
-	
-	
-	
-	public ArrayList<Calendar> getThursdaysFromTo(Calendar from, Calendar to){
-		//ToDo: buscar todos los dias que hace falta hacer el calculo. 
+	public static BigDecimal getStockQuantityToBuy(BigDecimal investment, BigDecimal price) {	
+		//--------------------------------------------- Es importante si halfdown o UP???? o deberia dar lo smismo???
 		
-		
-		ArrayList<Calendar> allThursdays = null;
-	
-		return allThursdays;
+		BigDecimal t = investment.divide(price, 3, RoundingMode.HALF_DOWN);
+		System.out.println(t);
+		return t;
 	}
 	
-	
-	public Calendar getLastThursday(int year, int month, int day) {
-		Calendar cal = new GregorianCalendar(year, month, day);
+	public static BigDecimal substractBrokerComision(BigDecimal investment, BigDecimal brokeComisionPercent) {
+		BigDecimal subt = investment.multiply(brokeComisionPercent).divide(new BigDecimal (100));
 		
-		cal.set(GregorianCalendar.DAY_OF_WEEK, Calendar.THURSDAY);
-		cal.set(GregorianCalendar.DAY_OF_WEEK_IN_MONTH, -1);
-		
-		return cal;	
+		return investment.subtract(subt) ;
 	}
+	
+	public static Function<String, ItxStockRow> mapStringToitxStockRow = (line) -> {
+
+		//Falta controlar el error de si hay alguna linea nula!!!!
+		String[] values = line.split(";");
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMMM-yyyy");
+		java.util.Date date = null;
+
+		try {
+			date = sdf.parse(values[0]);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Calendar cal = Calendar.getInstance();
+
+		//System.out.println("----- Fecha en origen: " + date);
+		cal.setTime(date);
+
+		ItxStockRow stocks = new ItxStockRow(cal, new BigDecimal(values[1]), new BigDecimal(values[2]));
+
+		return	stocks;
+	};
+
+	
+	
 	
 }
+
+

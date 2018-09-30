@@ -28,7 +28,7 @@ public class Main {
 		//--------- TODO parametros!!!!
 		//String path = "./stocks-ITX.csv";
 		
-		String path = "./UC_Tests/test-4.csv";
+		String path = "./UC_Tests/test-2.csv";
 		
 		BigDecimal inversionMensual = new BigDecimal(50);
 		BigDecimal comision = new BigDecimal(2);
@@ -76,7 +76,6 @@ public class Main {
 			//boolean isMonthPaydayFound = false;
 			while(i.hasNext()) {
 				
-				
 				//System.out.println(searchingMonth.getTime().toString());
 				HistoricalDataRow tmp = i.next();
 				//System.out.println("Ya se ha encontrado dia para este mes:" + searchingMonth.getTime().toString());
@@ -86,8 +85,6 @@ public class Main {
 					
 					if(tmp.isLastThursdayOfMonthOrAfter() ) {
 						//isMonthPaydayFound = true;
-						
-						
 						//Buscar dia de compra		
 						
 						if(i.hasNext()) {
@@ -108,14 +105,14 @@ public class Main {
 							BigDecimal lastPrice = tmp.getCierre();
 
 							System.out.println("Calculo de ganancias: " + totalStockQuantity.multiply(lastPrice));
-
 						}
 						searchingMonth.add(Calendar.MONTH, 1);
 						System.out.println("---> Por eso le sumo uno:" + searchingMonth.getTime().toString());
 						
 					}
 				}
-			}			
+			}
+			
 			br.close();
 
 		}catch(IOException e) {

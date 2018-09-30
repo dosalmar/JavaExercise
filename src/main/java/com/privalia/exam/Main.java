@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -25,13 +26,16 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 	
 		//--------- TODO parametros!!!!
-		String path = "./stocks-ITX.csv";
+		//String path = "./stocks-ITX.csv";
+		
+		String path = "./UC_Tests/test-4.csv";
+		
 		BigDecimal inversionMensual = new BigDecimal(50);
 		BigDecimal comision = new BigDecimal(2);
 		//if empty file, return error
 		BigDecimal totalStockQuantity = new BigDecimal(0);
 		
-		List<ItxStockRow> inputDataFromCsv = new ArrayList<ItxStockRow>();
+		List<HistoricalDataRow> inputDataFromCsv = new ArrayList<HistoricalDataRow>();
 
 		try{
 			File inputF = new File(path);
@@ -42,7 +46,7 @@ public class Main {
 			//Class<?> transformFunctions = ItxStockRow.class;
 			
 			inputDataFromCsv = br.lines().skip(1).map(mapStringToitxStockRow)
-					.sorted((final ItxStockRow r1, final ItxStockRow r2) -> r1.getDate().compareTo(r2.getDate()))
+					.sorted((final HistoricalDataRow r1, final HistoricalDataRow r2) -> r1.getDate().compareTo(r2.getDate()))
 					.collect(Collectors.toList());	
 			
 			//TODO ordenar las fechas por orden!!!
@@ -58,34 +62,59 @@ public class Main {
 			
 			
 			//Old way
-			Iterator<ItxStockRow> i = inputDataFromCsv.iterator();
+			Iterator<HistoricalDataRow> i = inputDataFromCsv.iterator();
 			
 			BigDecimal invesmentWOcomision = substractBrokerComision(inversionMensual, comision);
 
+			//String initialDate = ("2000-01-01");
+			
+			//Boolean is = false;
+			
+			Calendar searchingMonth = inputDataFromCsv.get(0).getDate();
+			System.out.println("FIRST:" + searchingMonth.getTime().toString());
+			
+			//boolean isMonthPaydayFound = false;
 			while(i.hasNext()) {
-				ItxStockRow tmp = i.next();
+				
+				
+				//System.out.println(searchingMonth.getTime().toString());
+				HistoricalDataRow tmp = i.next();
+				//System.out.println("Ya se ha encontrado dia para este mes:" + searchingMonth.getTime().toString());
+				
+				if(tmp.isSameMonth(searchingMonth)) {
+				//TODO mirar si ya he encontrado el dia de cobrar de ese mes;
+					
+					if(tmp.isLastThursdayOfMonthOrAfter() ) {
+						//isMonthPaydayFound = true;
+						
+						
+						//Buscar dia de compra		
+						
+						if(i.hasNext()) {
+							HistoricalDataRow nextOpenDay = i.next();
+							System.out.println("------------------------");
+							System.out.println("LastThursday: " + tmp);
+							BigDecimal price = nextOpenDay.getApertura();
+							System.out.println("Dia de compra: " + nextOpenDay);
+							System.out.println("Ya se ha encontrado dia para este mes:" + searchingMonth.getTime().toString());
+							
+							//Calc numero de acciones
+							BigDecimal monthStockQuantity = getStockQuantityToBuy(invesmentWOcomision, price);
+							System.out.println("Cantidad comprada: " + monthStockQuantity.toString());
+							totalStockQuantity = totalStockQuantity.add(monthStockQuantity);
+							System.out.println("Cantidad acumulada: " + totalStockQuantity.toString());
+						}else {
+							System.out.println("Last row.");
+							BigDecimal lastPrice = tmp.getCierre();
 
-				if(tmp.isLastThursdayOfMonth() ) {
-					//Buscar dia de compra
-					if(i.hasNext()) {
-						ItxStockRow nextOpenDay = i.next();
-						BigDecimal price = nextOpenDay.getApertura();
-						System.out.println("Dia de compra:\n" + nextOpenDay);
+							System.out.println("Calculo de ganancias: " + totalStockQuantity.multiply(lastPrice));
 
-						//Calc numero de acciones
-						BigDecimal monthStockQuantity = getStockQuantityToBuy(invesmentWOcomision, price);
-						System.out.println("Cantidad comprada:" + monthStockQuantity.toString());
-						totalStockQuantity = totalStockQuantity.add(monthStockQuantity);
-						System.out.println("Cantidad acumulada" + totalStockQuantity.toString());
-					}else {
-						System.out.println("Last row.");
-						BigDecimal lastPrice = tmp.getCierre();
-								
-						System.out.println("Calculo de ganancias: " + totalStockQuantity.multiply(lastPrice));
-								
+						}
+						searchingMonth.add(Calendar.MONTH, 1);
+						System.out.println("---> Por eso le sumo uno:" + searchingMonth.getTime().toString());
+						
 					}
 				}
-
 			}			
 			br.close();
 
@@ -98,8 +127,7 @@ public class Main {
 	public static BigDecimal getStockQuantityToBuy(BigDecimal investment, BigDecimal price) {	
 		//--------------------------------------------- Es importante si halfdown o UP???? o deberia dar lo smismo???
 		
-		BigDecimal t = investment.divide(price, 3, RoundingMode.HALF_DOWN);
-		System.out.println(t);
+		BigDecimal t = investment.divide(price, 3, RoundingMode.HALF_UP);
 		return t;
 	}
 	
@@ -109,7 +137,7 @@ public class Main {
 		return investment.subtract(subt) ;
 	}
 	
-	public static Function<String, ItxStockRow> mapStringToitxStockRow = (line) -> {
+	public static Function<String, HistoricalDataRow> mapStringToitxStockRow = (line) -> {
 
 		//Falta controlar el error de si hay alguna linea nula!!!!
 		String[] values = line.split(";");
@@ -128,7 +156,7 @@ public class Main {
 		//System.out.println("----- Fecha en origen: " + date);
 		cal.setTime(date);
 
-		ItxStockRow stocks = new ItxStockRow(cal, new BigDecimal(values[1]), new BigDecimal(values[2]));
+		HistoricalDataRow stocks = new HistoricalDataRow(cal, new BigDecimal(values[1]), new BigDecimal(values[2]));
 
 		return	stocks;
 	};

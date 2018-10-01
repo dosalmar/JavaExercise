@@ -2,7 +2,7 @@ package com.privalia.unit.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.List;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,18 +10,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
 import org.junit.Test;
 
-import com.privalia.csv.mapToHistoricalStockRow;
+
 import com.privalia.main.CalculatorOfInvestmentStock;
 
-import lombok.extern.log4j.Log4j;
+import model.DataRow;
 import model.HistoricalStockRow;
 
 
 public class CalculatorOfInvestmentStockTest {
-	
 	
 	@Test
 	public void testTotalStock() throws IOException, ParseException {
@@ -43,7 +41,7 @@ public class CalculatorOfInvestmentStockTest {
 		cal4.setTime(formatter.parse("01-12-2017"));
 		HistoricalStockRow h4 = new HistoricalStockRow(cal4, new BigDecimal(1), new BigDecimal(1));
 				
-		ArrayList historicalStockList = new ArrayList();
+		ArrayList<DataRow> historicalStockList = new ArrayList<DataRow>();
 	
 		historicalStockList.add(h1);
 		historicalStockList.add(h2);

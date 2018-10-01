@@ -1,16 +1,11 @@
 package com.privalia.integration.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.awt.List;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,10 +17,8 @@ import com.privalia.main.CalculatorOfInvestmentStock;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import lombok.extern.log4j.Log4j;
 import model.DataRow;
-import model.HistoricalStockRow;
-import java.util.ArrayList;
+
 
 
 
@@ -40,11 +33,12 @@ public class IntegrationTests{
 		BigDecimal brokerComission = new BigDecimal(2);
 
 		BigDecimal profit = new BigDecimal(0);
-		ArrayList inputDataFromCsv = new ArrayList();
+		
+		ArrayList<DataRow> inputDataFromCsv = new ArrayList<DataRow>();
 
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
-			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
+			inputDataFromCsv = (ArrayList<DataRow>) csv.getObjectArray(path);
 
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 
@@ -69,11 +63,11 @@ public class IntegrationTests{
 		BigDecimal brokerComission = new BigDecimal(2);
 		BigDecimal profit = new BigDecimal(0);
 
-		ArrayList inputDataFromCsv = new ArrayList();
+		ArrayList<DataRow> inputDataFromCsv = new ArrayList<DataRow>();
 
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
-			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
+			inputDataFromCsv = (ArrayList<DataRow>) csv.getObjectArray(path);
 
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 
@@ -98,11 +92,11 @@ public class IntegrationTests{
 		BigDecimal brokerComission = new BigDecimal(2);
 		BigDecimal profit = new BigDecimal(0);
 
-		ArrayList inputDataFromCsv = new ArrayList();
+		ArrayList<DataRow> inputDataFromCsv = new ArrayList<DataRow>();
 
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
-			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
+			inputDataFromCsv = (ArrayList<DataRow>) csv.getObjectArray(path);
 
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 
@@ -126,11 +120,11 @@ public class IntegrationTests{
 		BigDecimal brokerComission = new BigDecimal(2);
 		BigDecimal profit = new BigDecimal(0);
 
-		ArrayList inputDataFromCsv = new ArrayList();
+		ArrayList<DataRow> inputDataFromCsv = new ArrayList<DataRow>();
 
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
-			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
+			inputDataFromCsv = (ArrayList<DataRow>) csv.getObjectArray(path);
 
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 

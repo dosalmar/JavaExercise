@@ -15,12 +15,10 @@ import lombok.extern.log4j.Log4j;
 import model.DataRow;
 import model.HistoricalStockRow;
 
-
 public class mapToHistoricalStockRow extends CSVReader{
 	public mapToHistoricalStockRow() {
 		
 	}
-	
 	
     public List<DataRow> getObjectArray(String path) throws IOException {
     	List<DataRow> inputDataFromCsv = new ArrayList<DataRow>();

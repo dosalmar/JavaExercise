@@ -22,9 +22,6 @@ import model.DataRow;
 import model.HistoricalStockRow;
 
 
-
-
-
 public abstract class CSVReader {
         
         protected BufferedReader readFile(String path) throws FileNotFoundException {

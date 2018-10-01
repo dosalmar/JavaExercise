@@ -16,7 +16,7 @@ public class Main {
 		String path = args[0];
 		//String path = "./stocks-ITX.csv";
 		
-		
+		 
 		
 		BigDecimal monthInvestment = new BigDecimal(50);
 		BigDecimal brokerComission = new BigDecimal(2);

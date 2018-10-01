@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 @RunWith(JUnitParamsRunner.class)
 public class IntegrationTests{
-		
+
 	@Test
 	@Parameters({"./UC_Tests/test-1.csv"})
 	public void test1(String[] args) throws IOException, ParseException {
@@ -45,14 +45,14 @@ public class IntegrationTests{
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
 			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
-			
+
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 
 			profit = calculator.getResultingProfit();
 			System.out.println("Total amount when selling: "+ profit);
 			System.out.println("------------------------------------------------");
-			
-			
+
+
 		}catch(IOException e) {
 			throw e;
 		}
@@ -60,7 +60,7 @@ public class IntegrationTests{
 		Assert.assertEquals(expected, profit);
 
 	}
-	
+
 	@Test
 	@Parameters({"./UC_Tests/test-2.csv"})
 	public void test2(String[] args) throws IOException, ParseException {
@@ -68,28 +68,28 @@ public class IntegrationTests{
 		BigDecimal monthInvestment = new BigDecimal(50);
 		BigDecimal brokerComission = new BigDecimal(2);
 		BigDecimal profit = new BigDecimal(0);
-		
+
 		ArrayList inputDataFromCsv = new ArrayList();
 
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
 			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
-			
+
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 
 			profit = calculator.getResultingProfit();
 			System.out.println("Total amount when selling: "+ profit);
 			System.out.println("------------------------------------------------");
-			
-	
+
+
 
 		}catch(IOException e) {
 			throw e;
 		}
 		BigDecimal expected = new BigDecimal(48.453).setScale(3, RoundingMode.HALF_DOWN);
-			Assert.assertEquals(expected, profit);
+		Assert.assertEquals(expected, profit);
 	}
-	
+
 	@Test
 	@Parameters({"./UC_Tests/test-3.csv"})
 	public void test3(String[] args) throws IOException, ParseException {
@@ -97,27 +97,27 @@ public class IntegrationTests{
 		BigDecimal monthInvestment = new BigDecimal(50);
 		BigDecimal brokerComission = new BigDecimal(2);
 		BigDecimal profit = new BigDecimal(0);
-		
+
 		ArrayList inputDataFromCsv = new ArrayList();
 
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
 			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
-			
+
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 
 			profit = calculator.getResultingProfit();
 			System.out.println("Total amount when selling: "+ profit);
 			System.out.println("------------------------------------------------");
-	
+
 		}catch(IOException e) {
 			throw e;
 		}
-		
+
 		BigDecimal expected = new BigDecimal(48.761).setScale(3, RoundingMode.HALF_DOWN);
-			Assert.assertEquals(expected, profit);
+		Assert.assertEquals(expected, profit);
 	}
-	
+
 	@Test
 	@Parameters({"./UC_Tests/test-4.csv"})
 	public void test4(String[] args) throws IOException, ParseException {
@@ -125,21 +125,21 @@ public class IntegrationTests{
 		BigDecimal monthInvestment = new BigDecimal(50);
 		BigDecimal brokerComission = new BigDecimal(2);
 		BigDecimal profit = new BigDecimal(0);
-		
+
 		ArrayList inputDataFromCsv = new ArrayList();
 
 		try{
 			CSVReader csv = new mapToHistoricalStockRow();
 			inputDataFromCsv = (ArrayList) csv.getObjectArray(path);
-			
+
 			CalculatorOfInvestmentStock calculator = new CalculatorOfInvestmentStock(brokerComission, monthInvestment, inputDataFromCsv);
 
 			profit = calculator.getResultingProfit();
 			System.out.println("Total amount when selling: "+ profit);
 			System.out.println("------------------------------------------------");
-			
+
 			BigDecimal expected = new BigDecimal(144.428).setScale(3, RoundingMode.HALF_DOWN);
-			
+
 			Assert.assertEquals(expected, profit);
 		}catch(IOException e) {
 			throw e;
@@ -147,5 +147,5 @@ public class IntegrationTests{
 
 		//assertTrue(actualSum == expectedSum);
 	}
-	
+
 }
